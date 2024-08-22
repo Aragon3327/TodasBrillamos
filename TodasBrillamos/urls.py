@@ -1,3 +1,8 @@
+
+#
+# Aquí se añaden las urls de los sitios web. Abajo se explica
+# 
+
 """
 URL configuration for TodasBrillamos project.
 

@@ -1,3 +1,6 @@
+
+# No tocar
+
 """
 Django settings for TodasBrillamos project.
 

@@ -1,3 +1,8 @@
+
+# Backend
+# Clases que se guardaran en la base de datos
+# Docs: https://docs.djangoproject.com/en/5.1/topics/db/models/
+
 from django.db import models
 
 # Modelo de Categorías
