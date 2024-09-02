@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container p-2 my-2">
+  <div class="container d-flex justify-content-between">
+    <p class="display-6">Listado de productos</p>
+    <button type="button" data-bs-toggle="modal" data-bs-target="#menuCategoria" id="button-addon2" class="btn btn-outline-dark">Ver categorias</button>
+  </div>
+  <table class="table table-hover table-striped ">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Categoria</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Stock</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{item.nombre}}</td>
+        <td>{{item.categoria}}</td>
+        <td>{{item.descripcion}}</td>
+        <td>$ {{item.precio|floatformat:2}}</td>
+        <td>{{item.stock}} unidades</td>
+        <td>
+          <a href="{% url 'editarItem' item.id %}" style="display: inline;" class="btn btn-outline-dark">Editar Item</a>
+          <a href="{% url 'borrarItem' item.id %}" style="display: inline;" class="btn btn-outline-danger">Borrar Item</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="modal" id="menuCategoria">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">Categorias</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-hover table-striped">
+
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for categoria in categorias %}
+                <tr>
+                  <td>{{categoria.nombre}}</td>
+                  <td>
+                    <a href="{% url 'borrarCategoria' categoria.id %}" style="display: inline;" class="btn btn-outline-danger">Borrar Categoria</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+      </div>
+  </div>
+</div>
+
+{% endblock %}
