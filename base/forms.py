@@ -1,5 +1,5 @@
 from django import forms
-from .models import Item,Categorias
+from .models import Item,Categoria
 
 class LoginForm(forms.Form):
     username = forms.EmailField(widget=forms.TextInput(attrs={
@@ -19,7 +19,7 @@ class LoginForm(forms.Form):
 
 class CategoriasForm(forms.ModelForm):
     class Meta:
-        model = Categorias
+        model = Categoria
         fields = ('nombre',)
         
         widgets = {
@@ -31,7 +31,7 @@ class CategoriasForm(forms.ModelForm):
 
 class ItemForm(forms.ModelForm):
     categoria = forms.ModelChoiceField(
-        queryset=Categorias.objects.all(),
+        queryset=Categoria.objects.all(),
         widget=forms.Select(attrs={'class':'form-control'}))
     class Meta:
         model = Item

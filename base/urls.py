@@ -19,6 +19,7 @@ urlpatterns = [
 
     # Pedidos
     path("pedidoEdit/<int:pk>",views.pedidosCambio, name='editarPedido'),
+    path("pedidoExtend/<int:pk>",views.pedidosExtendView,name='pedidosExtend'),
 
     # Categorias
     path("nuevaCategoria/",views.RegistroCategoria, name='nuevaCategoria'),

@@ -1,42 +1,46 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container p-2 my-2">
-  <p class="display-6">Listado de productos</p>
-  <table class="table table-hover table-striped ">
-    <thead>
-      <tr>
-        <th>Id Pedido</th>
-        <th>Cliente</th>
-        <th>Dirección</th>
-        <th>Total</th>
-        <th>Entregado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for pedido in pedidos %}
-      <tr>
-        <td>{{pedido.id}}</td>
-        <td>{{pedido.cliente.nombre}}</td>
-        <td>{{pedido.cliente.direccion}}</td>
-        <td>$ {{pedido.total}}</td>
-        <td>
-          {% if pedido.entregado %}
-          <a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}" style="display: inline;" class="btn btn-outline-success">ENTREGADO</a>
-          {% else %}
-          <a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}" style="display: inline;" class="btn btn-outline-danger">NO ENTREGADO</a>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <p class="display-6">Listado de productos</p>
+    <table class="table table-hover table-striped ">
+        <thead>
+            <tr>
+                <th>Id Pedido</th>
+                <th>Cliente</th>
+                <th>Dirección</th>
+                <th>Total</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+            <tr>
+                <td>{{pedido.id}}</td>
+                <td>{{pedido.cliente.nombre}}</td>
+                <td>{{pedido.cliente.direccion}}</td>
+                <td>$ {{pedido.total}}</td>
+                <td>
+                    {% if pedido.entregado %}
+                    <a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
+                        style="display: inline;" class="btn btn-outline-success">ENTREGADO</a>
+                    {% else %}
+                    <a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
+                        style="display: inline;" class="btn btn-outline-danger">NO ENTREGADO</a>
+                    {% endif %}
+                    <a href="{% url 'pedidosExtend' pedido.id %}"
+                        style="display: inline;" class="btn btn-outline-dark">Ver pedido</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <script>
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  })
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
 </script>
 
 {% endblock %}

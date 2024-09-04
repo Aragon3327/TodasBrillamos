@@ -6,7 +6,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import LoginForm, ItemForm, CategoriasForm
 from django.contrib.auth import logout,authenticate,login
-from .models import Item,Pedido,Categorias
+from .models import Item,Pedido,Categoria
 from django.http import HttpResponseRedirect
 
 # VIEWS
@@ -33,9 +33,10 @@ def dashboard(request):
     return render(request,'index.html')
 
 def productosView(request):
+    items = Item.objects.all()
     context = {
         'items': Item.objects.all(),
-        'categorias':Categorias.objects.all()
+        'categorias':Categoria.objects.all()
     }
     
     return render(request,'productos.html',context)
@@ -46,7 +47,6 @@ def pedidosView(request):
     context = {
         'pedidos':Pedido.objects.all()
     }
-
     return render(request, 'pedidos.html', context)
 
 def pedidosCambio(request,pk):
@@ -55,6 +55,11 @@ def pedidosCambio(request,pk):
     pedido.save()
     return redirect('pedidos')
 
+def pedidosExtendView(request,pk):
+    context = {
+        'pedido': Pedido.objects.get(id = pk)
+    }
+    return render(request,'pedidosExtend.html', context)
 # Categorias
 
 def RegistroCategoria(request):
@@ -68,7 +73,7 @@ def RegistroCategoria(request):
     return render(request,'registroItem.html',{'form':form})
 
 def BorrarCategoria(request,pk):
-    get_object_or_404(Categorias,id = pk).delete()
+    get_object_or_404(Categoria,id = pk).delete()
     return redirect('productos')
 
 # ITEMS

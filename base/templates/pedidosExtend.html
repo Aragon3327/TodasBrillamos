@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container p-2 my-2">
+    <p class="display-5">Pedido N°: {{pedido.id}}</p>
+    <p class="fs-4"><strong>Dirección: </strong>{{pedido.cliente.direccion}}</p>
+    {% if pedido.entregado %}
+        <p class="fs-4"><strong>Estado: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
+            style="display: inline;" class="btn btn-outline-success">ENTREGADO</a></p>
+    {% else %}
+    <p class="fs-4"><strong>Estado: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
+        style="display: inline;" class="btn btn-outline-danger">NO ENTREGADO</a></p>
+    {% endif %}
+    <p class="fs-4"><strong>Cliente: </strong>{{pedido.cliente}}</p>
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>Items</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for item in pedido.items.all %}
+            <tr>
+                <td>{{item.nombre}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>
+
+{% endblock %}

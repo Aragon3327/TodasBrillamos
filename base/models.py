@@ -25,28 +25,30 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(null=True, blank=True,unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
+    # Regex
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="El número de teléfono debe cumplir con el formato: '+999999999'. Solo se permiten números con 15 digitos.")
+
     # Variables personalizadas
+    email = models.EmailField(null=True, blank=True,unique=True)
     nombre = models.CharField(null=True,blank=True,max_length=550)
     es_admin = models.BooleanField(default=False)
     direccion = models.TextField(null=True,blank=True)
-
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="El número de teléfono debe cumplir con el formato: '+999999999'. Solo se permiten números con 15 digitos.")
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True)
 
+    # OtrosS
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.email
+        return self.nombre
 
 # Modelo de Categorías
-class Categorias(models.Model):
+class Categoria(models.Model):
     nombre = models.CharField(max_length=255)
 
     def __str__(self) -> str:
@@ -61,7 +63,7 @@ class Item(models.Model):
     precio = models.FloatField()
     descuento = models.FloatField()
     descripcion = models.TextField()
-    categoria = models.ForeignKey(Categorias, on_delete=models.SET_NULL,null=True)
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL,null=True)
     imagen = models.ImageField(storage=ruta_items,null=True,blank=True)
 
     def __str__(self) -> str:
@@ -73,4 +75,4 @@ class Pedido(models.Model):
     cliente = models.ForeignKey(Usuario, on_delete=models.SET_NULL,null=True)
     total = models.FloatField(null=True,blank=True)
 
-    #TODO: Listado de items
+    items = models.ManyToManyField(Item,related_name='items')
