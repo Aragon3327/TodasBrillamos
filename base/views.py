@@ -6,6 +6,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import LoginForm, ItemForm, CategoriasForm
 from django.contrib.auth import logout,authenticate,login
+from django.contrib.auth.decorators import login_required
 from .models import Item,Pedido,Categoria
 from django.http import HttpResponseRedirect
 
@@ -24,14 +25,17 @@ def loginView(request):
         form = LoginForm()
     return render(request,'login.html',{'form':form})
 
+@login_required
 def logoutView(request):
     logout(request)
     return redirect('login')
 
+@login_required
 def dashboard(request):
 
     return render(request,'index.html')
 
+@login_required
 def productosView(request):
     items = Item.objects.all()
     context = {
@@ -42,26 +46,28 @@ def productosView(request):
     return render(request,'productos.html',context)
 
 # Pedidos
-
+@login_required
 def pedidosView(request):
     context = {
         'pedidos':Pedido.objects.all()
     }
     return render(request, 'pedidos.html', context)
 
+@login_required
 def pedidosCambio(request,pk):
     pedido = Pedido.objects.get(id = pk)
     pedido.entregado = not pedido.entregado
     pedido.save()
     return redirect('pedidos')
 
+@login_required
 def pedidosExtendView(request,pk):
     context = {
         'pedido': Pedido.objects.get(id = pk)
     }
     return render(request,'pedidosExtend.html', context)
 # Categorias
-
+@login_required
 def RegistroCategoria(request):
     if request.method == 'POST':
         form = CategoriasForm(request.POST)
@@ -72,12 +78,13 @@ def RegistroCategoria(request):
         form = CategoriasForm()
     return render(request,'registroItem.html',{'form':form})
 
+@login_required
 def BorrarCategoria(request,pk):
     get_object_or_404(Categoria,id = pk).delete()
     return redirect('productos')
 
 # ITEMS
-
+@login_required
 def RegistroItem(request):
     form = ItemForm(prefix='form')
     form2 = CategoriasForm(prefix='form2')
@@ -99,6 +106,7 @@ def RegistroItem(request):
         'form2':form2
         })
 
+@login_required
 def EditarItem(request,pk):
     itemEditado = Item.objects.get(id=pk)
     form = ItemForm(prefix='form',instance=itemEditado)
@@ -121,6 +129,7 @@ def EditarItem(request,pk):
         'form2':form2
         })
 
+@login_required
 def BorrarItem(request,pk):
     get_object_or_404(Item,id = pk).delete()
     return redirect('productos')
