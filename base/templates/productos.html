@@ -11,6 +11,7 @@
         <th>Nombre</th>
         <th>Categoria</th>
         <th>Descripción</th>
+        <th>Descuento</th>
         <th>Precio</th>
         <th>Stock</th>
         <th>Acciones</th>
@@ -22,6 +23,12 @@
         <td>{{item.nombre}}</td>
         <td>{{item.categoria}}</td>
         <td>{{item.descripcion}}</td>
+        {% if item.descuento %}
+        
+        <td>{{item.descuento}}%</td>
+        {% else %}
+        <td>No existe descuento</td>
+        {% endif %}
         <td>$ {{item.precio|floatformat:2}}</td>
         <td>{{item.stock}} unidades</td>
         <td>

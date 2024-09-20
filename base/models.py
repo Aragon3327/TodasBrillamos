@@ -54,20 +54,20 @@ class Categoria(models.Model):
     def __str__(self) -> str:
         return self.nombre
 
-ruta_items = FileSystemStorage(location='/media/items')
+# ruta_items = FileSystemStorage(location='/media/items')
 
 # Modelo de items.
 class Item(models.Model):
     nombre = models.CharField(max_length=255)
     stock = models.IntegerField()
     precio = models.FloatField()
-    descuento = models.FloatField()
+    descuento = models.FloatField(null=True,blank=True)
     descripcion = models.TextField()
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL,null=True)
-    imagen = models.ImageField(storage=ruta_items,null=True,blank=True)
-
+    imagen = models.ImageField(upload_to="items",null=True,blank=True)
     def __str__(self) -> str:
         return self.nombre
+    
     
 class Pedido(models.Model):
     entregado = models.BooleanField(default=False)

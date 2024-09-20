@@ -111,19 +111,31 @@ def EditarItem(request,pk):
     itemEditado = Item.objects.get(id=pk)
     form = ItemForm(prefix='form',instance=itemEditado)
     form2 = CategoriasForm(prefix='form2')
+    descuentoPrePOST = itemEditado.descuento
     if request.method == 'POST':
         if 'submit_form1' in request.POST:
-            form = ItemForm(request.POST,prefix='form',instance=itemEditado)
+            form = ItemForm(request.POST,request.FILES,prefix='form',instance=itemEditado)
             form2 = CategoriasForm(prefix='form2')
             if form.is_valid():
+                if form.cleaned_data['descuento']:
+                    precio = form.cleaned_data['precio']
+                    descuento = form.cleaned_data['descuento']
+                    precio_Descuento = precio - (precio * (descuento/100))
+                    itemEditado.precio = precio_Descuento
+                elif(descuentoPrePOST):
+                    precio = itemEditado.precio
+                    print(f'Descuento: {type(descuentoPrePOST)}, precio = {precio}')
+                    precio = precio / (1-(descuentoPrePOST/100))
+                    print(precio)
+                    itemEditado.precio = precio
                 form.save()
                 return redirect('productos')
         elif 'submit_form2' in request.POST:
             form = ItemForm(prefix='form',instance=itemEditado)
-            form2 = CategoriasForm(request.POST, prefix='form2')
+            form2 = CategoriasForm(request.POST, request.FILES,prefix='form2')
             if form2.is_valid():
                 form2.save()
-                return HttpResponseRedirect(request.get_full_path())
+                return redirect('editar_item', pk=pk)
     return render(request,'registroItem.html',{
         'form':form,
         'form2':form2

@@ -4,7 +4,7 @@
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                <form action="." method="POST" class="card p-5">
+                <form enctype="multipart/form-data" action="." method="POST" class="card p-5">
                     {% csrf_token %}
                     <p class="h4">Registro de producto</p>
                     <div class="form-group">
