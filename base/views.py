@@ -7,8 +7,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import LoginForm, ItemForm, CategoriasForm
 from django.contrib.auth import logout,authenticate,login
 from django.contrib.auth.decorators import login_required
-from .models import Item,Pedido,Categoria
-from django.http import HttpResponseRedirect
+from .models import Item,Pedido,Categoria,Usuario
+from django.http import HttpResponseRedirect,JsonResponse
+
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.authtoken.models import Token
+from rest_framework import status
 
 # VIEWS
 def loginView(request):
@@ -140,6 +147,69 @@ def EditarItem(request,pk):
         'form':form,
         'form2':form2
         })
+
+# APPJSON
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, BasicAuthentication,TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def ListadoItems(request):
+
+    items = Item.objects.all()
+
+    data = []
+
+    for item in items:
+        json = {
+            'id':item.id,
+            'nombre':item.nombre,
+            'stock':item.stock,
+            'precio':item.precio,
+            'descuento':item.descuento,
+            'descripcion':item.descripcion,
+            'categoria':item.categoria.nombre,
+            'imagen':item.imagen.url if item.imagen else None
+        }
+        data.append(json)
+
+    return JsonResponse(data,safe=False)
+
+def ItemJSON(request,id):
+    item = Item.objects.get(id = id)
+    json = {
+        'id':item.id,
+        'nombre':item.nombre,
+        'stock':item.stock,
+        'precio':item.precio,
+        'descuento':item.descuento,
+        'descripcion':item.descripcion,
+        'categoria':item.categoria.nombre,
+        'imagen':item.imagen.url if item.imagen else None
+    }
+
+    return JsonResponse(json,safe=False)
+
+@api_view(['POST'])
+def register_user(request):
+    print(request.headers)
+    nombre = request.data.get('nombre')
+    direccion = request.data.get('direccion')
+    edad = request.data.get('edad')
+    email = request.data.get('email')
+    password = request.data.get('contrasena')
+    genero = request.data.get('genero')
+
+    if Usuario.objects.filter(email=email).exists():
+        return Response('Ya existe una cuenta con el correo', status=status.HTTP_400_BAD_REQUEST)
+    user = Usuario.objects.create_user(
+        nombre=nombre,
+        direccion = direccion,
+        edad = edad,
+        email=email,
+        password=password,
+        genero = genero)
+    if user:
+        Token.objects.get_or_create(user=user)
+    return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
 
 @login_required
 def BorrarItem(request,pk):

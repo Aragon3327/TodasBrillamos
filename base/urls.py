@@ -1,8 +1,11 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from django.contrib.auth import views as auth_views
 from . import views
+from .serializer import CustomTokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.authtoken.views import obtain_auth_token
+from . import tokens
 
 urlpatterns = [
     # Vistas
@@ -25,9 +28,17 @@ urlpatterns = [
 
     # Categorias
     path("nuevaCategoria/",views.RegistroCategoria, name='nuevaCategoria'),
-    path("categoriaDel/<int:pk>",views.BorrarCategoria,name='borrarCategoria')
+    path("categoriaDel/<int:pk>",views.BorrarCategoria,name='borrarCategoria'),
 
+    # APP
+    path("JSONlistadoItems/",views.ListadoItems,name='listadoitems'),
+    path("JSONItem/<int:id>",views.ItemJSON, name='itemDescripcion'),
+    path('registerApp/', views.register_user, name='registerApp'),
 
+    # Autenticación
+    path('loginApp/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api-token-auth/', tokens.CustomAuthToken.as_view()),
 ]
 
 if settings.DEBUG:
