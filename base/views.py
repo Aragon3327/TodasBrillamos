@@ -150,7 +150,7 @@ def EditarItem(request,pk):
 
 # APPJSON
 @api_view(['GET'])
-@authentication_classes([SessionAuthentication, BasicAuthentication,TokenAuthentication])
+@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def ListadoItems(request):
 
@@ -173,6 +173,9 @@ def ListadoItems(request):
 
     return JsonResponse(data,safe=False)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def ItemJSON(request,id):
     item = Item.objects.get(id = id)
     json = {
@@ -188,9 +191,28 @@ def ItemJSON(request,id):
 
     return JsonResponse(json,safe=False)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def InfoUser(request,id):
+
+    print(request)
+
+    user = Usuario.objects.get(id = id)
+
+    json = {
+        'nombre': user.nombre,
+        'email': user.email,
+        'direccion': user.direccion,
+        'numero': user.phone_number,
+        'edad': user.edad
+    }
+    print(json)
+
+    return JsonResponse(json, safe=False)
+
 @api_view(['POST'])
 def register_user(request):
-    print(request.headers)
     nombre = request.data.get('nombre')
     direccion = request.data.get('direccion')
     edad = request.data.get('edad')
