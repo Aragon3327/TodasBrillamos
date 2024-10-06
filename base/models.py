@@ -9,6 +9,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
+from rest_framework.authtoken.models import Token
 from django.contrib import admin
 
 class CustomUserManager(BaseUserManager):
@@ -19,6 +20,7 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+        Token(user)
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):

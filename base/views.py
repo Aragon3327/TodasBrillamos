@@ -11,7 +11,7 @@ from .models import Item,Pedido,Categoria,Usuario,Pedido_Items
 from django.http import HttpResponseRedirect,JsonResponse
 
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
@@ -241,6 +241,7 @@ def pedidosPasados(request):
     return JsonResponse(data,safe=False)
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register_user(request):
     nombre = request.data.get('nombre')
     direccion = request.data.get('direccion')
