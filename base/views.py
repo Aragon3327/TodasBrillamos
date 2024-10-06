@@ -7,13 +7,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import LoginForm, ItemForm, CategoriasForm
 from django.contrib.auth import logout,authenticate,login
 from django.contrib.auth.decorators import login_required
-from .models import Item,Pedido,Categoria,Usuario
+from .models import Item,Pedido,Categoria,Usuario,Pedido_Items
 from django.http import HttpResponseRedirect,JsonResponse
 
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 
@@ -154,6 +154,8 @@ def EditarItem(request,pk):
 @permission_classes([IsAuthenticated])
 def ListadoItems(request):
 
+    print(request.headers)
+
     items = Item.objects.all()
 
     data = []
@@ -194,11 +196,9 @@ def ItemJSON(request,id):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def InfoUser(request,id):
+def InfoUser(request):
 
-    print(request)
-
-    user = Usuario.objects.get(id = id)
+    user = request.user
 
     json = {
         'nombre': user.nombre,
@@ -210,6 +210,35 @@ def InfoUser(request,id):
     print(json)
 
     return JsonResponse(json, safe=False)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def pedidosPasados(request):
+    user = request.user
+    pedidos = Pedido.objects.filter(cliente=user)
+    data = []
+    for pedido in pedidos:
+        items = Pedido_Items.objects.filter(pedido = pedido.id)
+        dataitems = []
+        for item in items:
+            jsonItem = {
+                'producto':{
+                    'id':item.item.id,
+                    'nombre':item.item.nombre,
+                    'imagen': item.item.imagen.url,
+                    'precio': item.item.precio,
+                },
+                'cantidad': item.cantidad
+            }
+            dataitems.append(jsonItem)
+        jsonpedido = {
+            'estado': pedido.entregado,
+            'items':dataitems,
+            'total': pedido.total,
+        }
+        data.append(jsonpedido)
+    return JsonResponse(data,safe=False)
 
 @api_view(['POST'])
 def register_user(request):

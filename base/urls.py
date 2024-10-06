@@ -33,8 +33,9 @@ urlpatterns = [
     # APP
     path('JSONlistadoItems/',views.ListadoItems,name='listadoitems'),
     path('JSONItem/<int:id>',views.ItemJSON, name='itemDescripcion'),
+    path('JSONinfoUser/',views.InfoUser, name='infoUser'),
     path('registerApp/', views.register_user, name='registerApp'),
-    path('infoUser/<int:id>',views.InfoUser, name='infoUser'),
+    path('JSONpedidosPasados/',views.pedidosPasados, name='pedidosPasados'),
 
     # Autenticación
     path('loginApp/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
