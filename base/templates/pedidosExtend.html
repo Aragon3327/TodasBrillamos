@@ -4,24 +4,34 @@
 <div class="container p-2 my-2">
     <p class="display-5">Pedido N°: {{pedido.id}}</p>
     <p class="fs-4"><strong>Dirección: </strong>{{pedido.cliente.direccion}}</p>
-    {% if pedido.entregado %}
-        <p class="fs-4"><strong>Estado: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
-            style="display: inline;" class="btn btn-outline-success">ENTREGADO</a></p>
-    {% else %}
-    <p class="fs-4"><strong>Estado: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
-        style="display: inline;" class="btn btn-outline-danger">NO ENTREGADO</a></p>
-    {% endif %}
     <p class="fs-4"><strong>Cliente: </strong>{{pedido.cliente}}</p>
+    <p class="fs-4"><strong>Total: </strong>$ {{pedido.total|floatformat:"2g"}}</p>
+    {% if pedido.pagado %}
+    <p class="fs-4"><strong>Estado pago: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedidoPago' pedido.id %}"
+        style="display: inline;" class="btn btn-outline-success">PAGADO</a></p>
+    {% else %}
+        <p class="fs-4"><strong>Estado pago: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedidoPago' pedido.id %}"
+            style="display: inline;" class="btn btn-outline-danger">NO PAGADO</a></p>
+    {% endif %}
+    {% if pedido.enviado %}
+        <p class="fs-4"><strong>Estado envio: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
+            style="display: inline;" class="btn btn-outline-success">ENVIADO</a></p>
+    {% else %}
+    <p class="fs-4"><strong>Estado envio: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
+        style="display: inline;" class="btn btn-outline-danger">NO ENVIADO</a></p>
+    {% endif %}
     <table class="table table-hover table-striped">
         <thead>
             <tr>
-                <th>Items</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
             </tr>
         </thead>
         <tbody>
-        {% for item in pedido.items.all %}
+        {% for item in items %}
             <tr>
-                <td>{{item.nombre}}</td>
+                <td>{{item.item.nombre}}</td>
+                <td>{{item.cantidad}}</td>
             </tr>
         {% endfor %}
         </tbody>

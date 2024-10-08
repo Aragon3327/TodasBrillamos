@@ -24,6 +24,7 @@ urlpatterns = [
 
     # Pedidos
     path('pedidoEdit/<int:pk>',views.pedidosCambio, name='editarPedido'),
+    path('pedidoEditPago/<int:pk>',views.pedidosCambioPago,name='editarPedidoPago'),
     path('pedidoExtend/<int:pk>',views.pedidosExtendView,name='pedidosExtend'),
 
     # Categorias

@@ -11,6 +11,7 @@ from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 from rest_framework.authtoken.models import Token
 from django.contrib import admin
+from datetime import date
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -74,10 +75,12 @@ class Item(models.Model):
         return self.nombre if self.nombre else ""
 
 class Pedido(models.Model):
-    entregado = models.BooleanField(default=False)
+    enviado = models.BooleanField(default=False)
     cliente = models.ForeignKey('Usuario', on_delete=models.SET_NULL, null=True)
     total = models.FloatField(null=True, blank=True)
     items = models.ManyToManyField(Item, through='Pedido_Items')
+    pagado = models.BooleanField(default=False)
+    fecha = models.DateField(_("Date"),default=date.today)
 
     def __str__(self):
         return f"Pedido {self.id} - Cliente: {self.cliente}" if (self.cliente) else f"Pedido {self.id}"

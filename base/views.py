@@ -63,14 +63,21 @@ def pedidosView(request):
 @login_required
 def pedidosCambio(request,pk):
     pedido = Pedido.objects.get(id = pk)
-    pedido.entregado = not pedido.entregado
+    pedido.enviado = not pedido.enviado
+    pedido.save()
+    return redirect('pedidos')
+
+def pedidosCambioPago(request,pk):
+    pedido = Pedido.objects.get(id = pk)
+    pedido.pagado = not pedido.pagado
     pedido.save()
     return redirect('pedidos')
 
 @login_required
 def pedidosExtendView(request,pk):
     context = {
-        'pedido': Pedido.objects.get(id = pk)
+        'pedido': Pedido.objects.get(id = pk),
+        'items': Pedido_Items.objects.filter(pedido = pk)
     }
     return render(request,'pedidosExtend.html', context)
 # Categorias
@@ -154,8 +161,6 @@ def EditarItem(request,pk):
 @permission_classes([IsAuthenticated])
 def ListadoItems(request):
 
-    print(request.headers)
-
     items = Item.objects.all()
 
     data = []
@@ -207,7 +212,6 @@ def InfoUser(request):
         'numero': user.phone_number,
         'edad': user.edad
     }
-    print(json)
 
     return JsonResponse(json, safe=False)
 
