@@ -2,9 +2,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 from . import views
-from .serializer import CustomTokenObtainPairView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework.authtoken.views import obtain_auth_token
 from . import tokens
 
 urlpatterns = [
@@ -15,6 +12,7 @@ urlpatterns = [
 
     # Usuarios
     path('login/',views.loginView,name='login'),
+    path('registroAd/',views.registroAdmin,name='registroAdmin'),
     path('logout/',views.logoutView,name='logout'),
     
     # Items
@@ -39,8 +37,6 @@ urlpatterns = [
     path('JSONpedidosPasados/',views.pedidosPasados, name='pedidosPasados'),
 
     # Autenticación
-    path('loginApp/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api-token-auth/', tokens.CustomAuthToken.as_view()),
 ]
 

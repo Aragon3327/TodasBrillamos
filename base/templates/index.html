@@ -1,92 +1,124 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container p-2 my-2">
-  <p class="display-5">Dashboard</p>
-  <div class="container-sm p-2">
-    <h4>Ventas totales</h5>
-    <div class="container">
-      <canvas height="100px" id="ventasTotales"></canvas>
+    <p class="display-5">Dashboard</p>
+    <div class="container-sm p-2">
+        <h4>Ventas totales</h5>
+            <div class="container">
+                <canvas height="100px" id="ventasTotales"></canvas>
+            </div>
+            <div class="container">
+                <div class="row p-4">
+                    <div class="col m-2" style="display: flex;flex-direction: column;align-items: center;">
+                        <h4>Ordenes totales</h4>
+                        <div style="height: 300px;">
+                            <canvas height="100px" id="ordenesTotales"></canvas>
+                        </div>
+                    </div>
+                    <div class="col m-2" style="display: flex;flex-direction: column;align-items: center;">
+                        <h4>Ordenes enviadas y no enviadas</h4>
+                        <div style="height: 300px;">
+                            <canvas height="100px" id="ordenesEstado"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </div>
-    <div class="container">
-      <div class="row">
-        <div class="col" style="display: flex;flex-direction: column;justify-content: center;">
-          <h4>Ordenes totales</h4>
-          <div style="height: 300px;">
-            <canvas height="100px" id="ordenesTotales"></canvas>
-          </div>
-        </div>
-        <div class="col" style="display: flex;flex-direction: column;justify-content: center;">
-          <h4>Ordenes entregadas y no entregadas</h4>
-          <div style="height: 300px;">
-            <canvas height="100px" id="ordenesEstado"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-
-  </div>
 </div>
 
 <script>
-  const ctx = document.getElementById('ventasTotales');
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [{
-        label: '# of Votes',
-        data: [8, 12, 15, 10, 13, 19],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      },
-    stacked: false,
-    plugins: {
-      title: {
-        display: true,
-      }
-    }}
-  });
 
-  const data = {
-  labels: [
-    'Red',
-    'Blue',
-    'Yellow'
-  ],
-  datasets: [{
-    label: 'My First Dataset',
-    data: [300, 50, 100],
-    backgroundColor: [
-      'rgb(255, 99, 132)',
-      'rgb(54, 162, 235)',
-      'rgb(255, 205, 86)'
-    ],
-    hoverOffset: 1
-  }]
-};
+    let date = new Date;
+    let mes = date.getMonth();
+    let year = date.getFullYear();
 
-const config = {
-  type: 'doughnut',
-  data: data,
-  
-};
+    let diasTotales = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 
-  
+    let diasList = [];
 
-const ordenesEstado = document.getElementById('ordenesEstado');
-const ordenesTotales = document.getElementById('ordenesTotales');
+    for (let i = 1; i <= diasTotales; i++) {
+        diasList.push(i);
+    }
 
-new Chart(ordenesTotales,config)
-new Chart(ordenesEstado,config);
+    const ctx = document.getElementById('ventasTotales');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: diasList,
+            datasets: [{
+                label: 'Ordenes pagadas',
+                data: [8, 12, 15, 10, 13, 19],
+                borderWidth: 1
+                },
+                {
+                label: 'Ordenes no pagadas',
+                data: [1, 10, 2, 4, 2, 9],
+                borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            stacked: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: `Ventas: ${mes}/${year}`
+                }
+            }
+        }
+    });
+
+    const dataOrdenes = {
+        labels: [
+            'No pagadas',
+            'Pagadas',
+        ],
+        datasets: [{
+            data: [100, 50],
+            backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+            ],
+            hoverOffset: 1
+        }]
+    };
+
+    const dataEnvios = {
+        labels: [
+            'No enviadas',
+            'Enviadas',
+        ],
+        datasets: [{
+            data: [100, 50],
+            backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+            ],
+            hoverOffset: 1
+        }]
+    };
+
+    const configOrdenes = {
+        type: 'doughnut',
+        data: dataOrdenes,
+    };
+
+    const configEnvios = {
+        type: 'doughnut',
+        data: dataEnvios,
+    };
+
+    const ordenesEstado = document.getElementById('ordenesEstado');
+    const ordenesTotales = document.getElementById('ordenesTotales');
+
+    new Chart(ordenesTotales, configOrdenes);
+    new Chart(ordenesEstado, configEnvios);
 
 </script>
 

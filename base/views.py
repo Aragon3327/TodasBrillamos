@@ -4,7 +4,7 @@
 # Docs: https://docs.djangoproject.com/en/5.1/topics/http/views/
 
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import LoginForm, ItemForm, CategoriasForm
+from .forms import LoginForm, ItemForm, CategoriasForm,RegistroForm
 from django.contrib.auth import logout,authenticate,login
 from django.contrib.auth.decorators import login_required
 from .models import Item,Pedido,Categoria,Usuario,Pedido_Items
@@ -31,6 +31,19 @@ def loginView(request):
     else:
         form = LoginForm()
     return render(request,'login.html',{'form':form})
+
+@login_required
+def registroAdmin(request):
+    if request.method == 'POST':
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.es_admin = True
+            user.save()
+            return redirect('/')
+    else:
+        form = RegistroForm()
+    return render(request,'registroAdmin.html',{'form':form})
 
 @login_required
 def logoutView(request):

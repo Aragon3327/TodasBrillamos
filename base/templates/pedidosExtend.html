@@ -2,24 +2,27 @@
 {% block content %}
 
 <div class="container p-2 my-2">
-    <p class="display-5">Pedido N°: {{pedido.id}}</p>
+    <p class="display-5"><span></span>Pedido N°: {{pedido.id}}</p>
     <p class="fs-4"><strong>Dirección: </strong>{{pedido.cliente.direccion}}</p>
-    <p class="fs-4"><strong>Cliente: </strong>{{pedido.cliente}}</p>
-    <p class="fs-4"><strong>Total: </strong>$ {{pedido.total|floatformat:"2g"}}</p>
-    {% if pedido.pagado %}
-    <p class="fs-4"><strong>Estado pago: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedidoPago' pedido.id %}"
-        style="display: inline;" class="btn btn-outline-success">PAGADO</a></p>
-    {% else %}
-        <p class="fs-4"><strong>Estado pago: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedidoPago' pedido.id %}"
-            style="display: inline;" class="btn btn-outline-danger">NO PAGADO</a></p>
-    {% endif %}
-    {% if pedido.enviado %}
-        <p class="fs-4"><strong>Estado envio: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
-            style="display: inline;" class="btn btn-outline-success">ENVIADO</a></p>
-    {% else %}
-    <p class="fs-4"><strong>Estado envio: </strong><a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
-        style="display: inline;" class="btn btn-outline-danger">NO ENVIADO</a></p>
-    {% endif %}
+    <p class="fs-4"><strong>Cliente: </strong>{{pedido.cliente}}
+        <strong>Total: </strong>$ {{pedido.total|floatformat:"2g"}}
+        <strong>Estado pago: </strong>
+        {% if pedido.pagado %}
+        <a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedidoPago' pedido.id %}"
+            style="display: inline;" class="btn btn-outline-success">PAGADO</a>
+        {% else %}
+        <a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedidoPago' pedido.id %}"
+            style="display: inline;" class="btn btn-outline-success">NO PAGADO</a>
+        {% endif %}
+        <strong>Estado envio: </strong>
+        {% if pedido.enviado %}
+        <a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
+            style="display: inline;" class="btn btn-outline-success">ENVIADO</a>
+        {% else %}
+        <a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
+            style="display: inline;" class="btn btn-outline-success">NO ENVIADO</a>
+        {% endif %}
+    </p>
     <table class="table table-hover table-striped">
         <thead>
             <tr>
@@ -28,12 +31,12 @@
             </tr>
         </thead>
         <tbody>
-        {% for item in items %}
+            {% for item in items %}
             <tr>
                 <td>{{item.item.nombre}}</td>
                 <td>{{item.cantidad}}</td>
             </tr>
-        {% endfor %}
+            {% endfor %}
         </tbody>
     </table>
 </div>

@@ -26,7 +26,13 @@
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-dark" href="{%url 'itemRegistro'%}">Registrar producto</a>
+                <div class="btn-group">
+                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">Registro</button>
+                    <div class="dropdown-menu">
+                        <a class="nav-link text-dark" href="{% url 'registroAdmin' %}">Registrar admin</a>
+                        <a class="nav-link text-dark" href="{%url 'itemRegistro'%}">Registrar producto</a>
+                    </div>
+                </div>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark" href="{%url 'logout'%}">Cerrar Sesión</a>

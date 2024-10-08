@@ -1,5 +1,5 @@
 from django import forms
-from .models import Item,Categoria
+from .models import Item,Categoria, Usuario
 
 class LoginForm(forms.Form):
     username = forms.EmailField(widget=forms.TextInput(attrs={
@@ -15,6 +15,32 @@ class LoginForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.fields['username'].label = "Correo"
+        self.fields['password'].label = "Contraseña"
+
+class RegistroForm(forms.ModelForm):
+
+    class Meta:
+        model = Usuario
+        fields = ('email','nombre','password')
+
+        widgets = {
+            'email':forms.TextInput(attrs={
+                'autocomplete':'off',
+                'class' : 'form-control mb-2'
+            }),
+            'nombre':forms.TextInput(attrs={
+                'autocomplete':'off',
+                'class' : 'form-control mb-2'
+            }),
+            'password':forms.PasswordInput(attrs={
+                'autocomplete':'off',
+                'class' : 'form-control mb-2'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(RegistroForm, self).__init__(*args, **kwargs)
+        self.fields['email'].label = "Correo"
         self.fields['password'].label = "Contraseña"
 
 class CategoriasForm(forms.ModelForm):

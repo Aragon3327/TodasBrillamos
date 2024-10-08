@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="d-flex justify-content-center p-4">
+    <form action="." method="POST" style="width: 400px;">
+        <p class="display-6">Registrar nuevo admin</p>
+        {% csrf_token %}
+    
+        {{form.as_p}}
+        <button type="submit" class="btn btn-success">Registrar admin</button>
+    </form>
+</div>
+
+{% endblock %}
