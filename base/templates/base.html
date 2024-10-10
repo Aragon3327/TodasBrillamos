@@ -10,8 +10,8 @@
     <title>Todas Brillamos</title>
 </head>
 <body>
-    <nav class="navbar p-2 ps-4 pe-4 sticky-top border-bottom border-2" style="background-color: white;">
-        <a href="/"><img style="height: 90px;" src="{% static 'images/logo.jpg' %}" alt="ZAZIL"></a>
+    <nav class="navbar p-2 ps-4 pe-4 sticky-top border-bottom border-2" style="background-color: #ffd6cc;">
+        <a href="/"><img class="rounded-circle" style="height: 90px;" src="{% static 'images/logo.jpg' %}" alt="ZAZIL"></a>
         <ul class="nav">
             <li class="nav-item">
                 <a class="nav-link text-dark" href="/">Inicio</a>
@@ -29,8 +29,8 @@
                 <div class="btn-group">
                     <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">Registro</button>
                     <div class="dropdown-menu">
-                        <a class="nav-link text-dark" href="{% url 'registroAdmin' %}">Registrar admin</a>
                         <a class="nav-link text-dark" href="{%url 'itemRegistro'%}">Registrar producto</a>
+                        <a class="nav-link text-dark" href="{% url 'registroAdmin' %}">Registrar admin</a>
                     </div>
                 </div>
             </li>

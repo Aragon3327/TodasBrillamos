@@ -52,8 +52,28 @@ def logoutView(request):
 
 @login_required
 def dashboard(request):
+    import datetime
+    actual = datetime.datetime.now()
 
-    return render(request,'index.html')
+    pedidosTotales = Pedido.objects.filter(fecha__year=actual.year,fecha__month=actual.month)
+
+    pedidosTotalesConteo = []
+    pedidosPagados = 0
+    pedidosNoPagados = 0
+    for pedido in pedidosTotales:
+        if pedido.pagado:
+            pedidosPagados += 1
+        else:
+            pedidosNoPagados += 1
+    
+    pedidosTotalesConteo.append(pedidosPagados)
+    pedidosTotalesConteo.append(pedidosNoPagados)
+
+    context = {
+        'pedidosTotalesConteo' : pedidosTotalesConteo
+    }
+
+    return render(request,'index.html',context)
 
 @login_required
 def productosView(request):
@@ -269,16 +289,17 @@ def register_user(request):
 
     if Usuario.objects.filter(email=email).exists():
         return Response('Ya existe una cuenta con el correo', status=status.HTTP_400_BAD_REQUEST)
-    user = Usuario.objects.create_user(
-        nombre=nombre,
-        direccion = direccion,
-        edad = edad,
-        email=email,
-        password=password,
-        genero = genero)
-    if user:
-        Token.objects.get_or_create(user=user)
-    return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+    else:
+        user = Usuario.objects.create_user(
+            nombre=nombre,
+            direccion = direccion,
+            edad = edad,
+            email=email,
+            password=password,
+            genero = genero)
+        if user:
+            Token.objects.get_or_create(user=user)
+        return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
 
 @login_required
 def BorrarItem(request,pk):

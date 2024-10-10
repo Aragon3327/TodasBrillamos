@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container p-2 my-2">
-    <div class="row">
+    <div class="row" style="align-items: center;">
         <p class="display-6 col">Listado de productos</p>
         <div class="input-group col" style="height: 30px;">
             <input id="search" onkeyup="busqueda()" type="text" class="form-control" placeholder="Buscar por...">
@@ -17,8 +17,8 @@
                 <th>Cliente</th>
                 <th>Dirección</th>
                 <th>Total</th>
-                <th>Envio</th>
                 <th>Pago</th>
+                <th>Envio</th>
                 <th>Opciones</th>
             </tr>
         </thead>
@@ -29,16 +29,16 @@
                 <td>{{pedido.fecha}}</td>
                 <td>{{pedido.cliente.nombre}}</td>
                 <td>{{pedido.cliente.direccion}}</td>
-                <td>$ {{pedido.total|floatformat:"2g"}}</td>
-                {% if pedido.enviado %}
-                <td class="text-success">ENTREGADO</td>
-                {% else %}
-                <td class="text-danger">NO ENTREGADO</td>
-                {% endif %}
+                <td>${{pedido.total|floatformat:"2g"}}</td>
                 {% if pedido.pagado %}
                 <td class="text-success">PAGADO</td>
                 {% else %}
                 <td class="text-danger">NO PAGADO</td>
+                {% endif %}
+                {% if pedido.enviado %}
+                <td class="text-success">ENTREGADO</td>
+                {% else %}
+                <td class="text-danger">NO ENTREGADO</td>
                 {% endif %}
                 <td>
                     <a href="{% url 'pedidosExtend' pedido.id %}"
@@ -52,30 +52,33 @@
 
 <script>
 
-    var valor = 2
+    let valor = 2
+    const btnUsuario = document.getElementById("usuariobtn");
+    const btnPedido = document.getElementById("pedidobtn");
 
     function busquedaUsuario(value) {
-        btn = document.getElementById("usuariobtn");
         if (value != valor) {
-            btn.classList.remove("btn-outline-secondary");
-            btn.classList.add("btn-primary");
+            btnUsuario.classList.remove("btn-outline-secondary");
+            btnUsuario.classList.add("btn-primary");
+
+            btnPedido.classList.remove("btn-primary");
+            btnPedido.classList.add("btn-outline-secondary");
             valor = value
         } else {
-            btn.classList.remove("btn-primary");
-            btn.classList.add("btn-outline-secondary");
+            btnUsuario.classList.remove("btn-primary");
+            btnUsuario.classList.add("btn-outline-secondary");
             busquedaId(0)
         }
     }
 
     function busquedaId(value) {
-        btn = document.getElementById("pedidobtn");
         if (value != valor) {
-            btn.classList.remove("btn-outline-secondary");
-            btn.classList.add("btn-primary");
+            btnPedido.classList.remove("btn-outline-secondary");
+            btnPedido.classList.add("btn-primary");
             valor = value
         } else {
-            btn.classList.remove("btn-primary");
-            btn.classList.add("btn-outline-secondary");
+            btnPedido.classList.remove("btn-primary");
+            btnPedido.classList.add("btn-outline-secondary");
             busquedaUsuario(2)
         }
     }
