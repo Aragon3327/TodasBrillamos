@@ -75,6 +75,9 @@
         if (value != valor) {
             btnPedido.classList.remove("btn-outline-secondary");
             btnPedido.classList.add("btn-primary");
+
+            btnUsuario.classList.remove("btn-primary");
+            btnUsuario.classList.add("btn-outline-secondary");
             valor = value
         } else {
             btnPedido.classList.remove("btn-primary");

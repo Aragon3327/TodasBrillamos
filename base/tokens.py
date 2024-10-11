@@ -15,7 +15,6 @@ class CustomAuthToken(ObtainAuthToken):
         except:
             return Response(status = status.HTTP_406_NOT_ACCEPTABLE)
         try:
-            print("Nose")
             serializer.is_valid(raise_exception=True)
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)

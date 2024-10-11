@@ -30,11 +30,12 @@ urlpatterns = [
     path('categoriaDel/<int:pk>',views.BorrarCategoria,name='borrarCategoria'),
 
     # APP
-    path('JSONlistadoItems/',views.ListadoItems,name='listadoitems'),
-    path('JSONItem/<int:id>',views.ItemJSON, name='itemDescripcion'),
-    path('JSONinfoUser/',views.InfoUser, name='infoUser'),
-    path('registerApp/', views.register_user, name='registerApp'),
-    path('JSONpedidosPasados/',views.pedidosPasados, name='pedidosPasados'),
+    path('JSONlistadoItems/',views.ListadoItems),
+    path('JSONItem/<int:id>',views.ItemJSON),
+    path('JSONinfoUser/',views.InfoUser),
+    path('registerApp/', views.register_user),
+    path('JSONpedidosPasados/',views.pedidosPasados),
+    path('editarP/',views.EditarPerfil),
 
     # Autenticación
     path('api-token-auth/', tokens.CustomAuthToken.as_view()),

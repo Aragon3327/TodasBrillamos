@@ -5,7 +5,7 @@
     <div class="container-sm p-2">
         <h4>Ventas totales</h5>
             <div class="container">
-                <canvas height="100px" id="ventasTotales"></canvas>
+                <canvas height="400px" id="ventasTotales"></canvas>
             </div>
             <div class="container">
                 <div class="row p-4">
@@ -29,6 +29,14 @@
 
 <script>
 
+    function reloadElement() {
+        const element = document.getElementById('ventasTotales');
+        element.width = canvas.parentElement.clientWidth;
+        element.height = 100;
+    }
+
+    window.addEventListener('resize', reloadElement);
+
     let date = new Date;
     let mes = date.getMonth();
     let year = date.getFullYear();
@@ -50,12 +58,12 @@
                 label: 'Ordenes pagadas',
                 data: [8, 12, 15, 10, 13, 19],
                 borderWidth: 1
-                },
-                {
+            },
+            {
                 label: 'Ordenes no pagadas',
                 data: [1, 10, 2, 4, 2, 9],
                 borderWidth: 1
-                }
+            }
             ]
         },
         options: {
@@ -64,6 +72,7 @@
                 mode: 'index',
                 intersect: false,
             },
+            maintainAspectRatio: false,
             stacked: false,
             plugins: {
                 title: {

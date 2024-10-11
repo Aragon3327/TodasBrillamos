@@ -17,6 +17,12 @@ class LoginForm(forms.Form):
         self.fields['username'].label = "Correo"
         self.fields['password'].label = "Contraseña"
 
+class EditarPerfilForm(forms.ModelForm):
+
+    class Meta:
+        model = Usuario
+        fields = ('email','nombre','direccion','edad','phone_number')
+
 class RegistroForm(forms.ModelForm):
 
     class Meta:

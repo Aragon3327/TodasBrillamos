@@ -4,11 +4,12 @@
 # Docs: https://docs.djangoproject.com/en/5.1/topics/http/views/
 
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import LoginForm, ItemForm, CategoriasForm,RegistroForm
 from django.contrib.auth import logout,authenticate,login
 from django.contrib.auth.decorators import login_required
-from .models import Item,Pedido,Categoria,Usuario,Pedido_Items
 from django.http import HttpResponseRedirect,JsonResponse
+from .forms import LoginForm, ItemForm, CategoriasForm,RegistroForm,EditarPerfilForm
+from .models import Item,Pedido,Categoria,Usuario,Pedido_Items
+from .decorators import admin_required
 
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated,AllowAny
@@ -51,6 +52,7 @@ def logoutView(request):
     return redirect('login')
 
 @login_required
+@admin_required
 def dashboard(request):
     import datetime
     actual = datetime.datetime.now()
@@ -76,6 +78,7 @@ def dashboard(request):
     return render(request,'index.html',context)
 
 @login_required
+@admin_required
 def productosView(request):
     items = Item.objects.all()
     context = {
@@ -87,6 +90,7 @@ def productosView(request):
 
 # Pedidos
 @login_required
+@admin_required
 def pedidosView(request):
     context = {
         'pedidos':Pedido.objects.all()
@@ -94,12 +98,15 @@ def pedidosView(request):
     return render(request, 'pedidos.html', context)
 
 @login_required
+@admin_required
 def pedidosCambio(request,pk):
     pedido = Pedido.objects.get(id = pk)
     pedido.enviado = not pedido.enviado
     pedido.save()
     return redirect('pedidos')
 
+@login_required
+@admin_required
 def pedidosCambioPago(request,pk):
     pedido = Pedido.objects.get(id = pk)
     pedido.pagado = not pedido.pagado
@@ -107,14 +114,17 @@ def pedidosCambioPago(request,pk):
     return redirect('pedidos')
 
 @login_required
+@admin_required
 def pedidosExtendView(request,pk):
     context = {
         'pedido': Pedido.objects.get(id = pk),
         'items': Pedido_Items.objects.filter(pedido = pk)
     }
     return render(request,'pedidosExtend.html', context)
+
 # Categorias
 @login_required
+@admin_required
 def RegistroCategoria(request):
     if request.method == 'POST':
         form = CategoriasForm(request.POST)
@@ -126,12 +136,14 @@ def RegistroCategoria(request):
     return render(request,'registroItem.html',{'form':form})
 
 @login_required
+@admin_required
 def BorrarCategoria(request,pk):
     get_object_or_404(Categoria,id = pk).delete()
     return redirect('productos')
 
 # ITEMS
 @login_required
+@admin_required
 def RegistroItem(request):
     form = ItemForm(prefix='form')
     form2 = CategoriasForm(prefix='form2')
@@ -154,6 +166,7 @@ def RegistroItem(request):
         })
 
 @login_required
+@admin_required
 def EditarItem(request,pk):
     itemEditado = Item.objects.get(id=pk)
     form = ItemForm(prefix='form',instance=itemEditado)
@@ -188,7 +201,31 @@ def EditarItem(request,pk):
         'form2':form2
         })
 
-# APPJSON
+@login_required
+@admin_required
+def BorrarItem(request,pk):
+    get_object_or_404(Item,id = pk).delete()
+    return redirect('productos')
+
+# APP POST's & GET's
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def EditarPerfil(request):
+    user = request.user
+
+    form = EditarPerfilForm(data=request.data, instance=user)
+
+    if form.is_valid():
+        password = request.data.get('contrasena')
+        if password:
+            user.set_password(password)
+        form.save()
+        return Response(status=status.HTTP_200_OK)
+    else:
+        print(form.errors)
+        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -243,7 +280,7 @@ def InfoUser(request):
         'email': user.email,
         'direccion': user.direccion,
         'numero': user.phone_number,
-        'edad': user.edad
+        'edad': user.edad,
     }
 
     return JsonResponse(json, safe=False)
@@ -270,7 +307,8 @@ def pedidosPasados(request):
             }
             dataitems.append(jsonItem)
         jsonpedido = {
-            'estado': pedido.entregado,
+            'fecha':pedido.fecha,
+            'estado': pedido.enviado,
             'items':dataitems,
             'total': pedido.total,
         }
@@ -301,7 +339,3 @@ def register_user(request):
             Token.objects.get_or_create(user=user)
         return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
 
-@login_required
-def BorrarItem(request,pk):
-    get_object_or_404(Item,id = pk).delete()
-    return redirect('productos')
