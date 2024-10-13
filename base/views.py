@@ -290,7 +290,7 @@ def InfoUser(request):
 @permission_classes([IsAuthenticated])
 def pedidosPasados(request):
     user = request.user
-    pedidos = Pedido.objects.filter(cliente=user)
+    pedidos = Pedido.objects.filter(cliente=user).order_by('-fecha')
     data = []
     for pedido in pedidos:
         items = Pedido_Items.objects.filter(pedido = pedido.id)
@@ -338,4 +338,36 @@ def register_user(request):
         if user:
             Token.objects.get_or_create(user=user)
         return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def crearPedido(request):
+    datos = request.data
+    user = request.user
+    pedido = Pedido.objects.create(cliente=user, total=0.0)
+    total_pedido = 0.0
+
+    for item_data in datos:
+        try:
+            
+            item = Item.objects.get(id=item_data['producto']['id'])
+            cantidad = item_data.get('cantidad', 1)
+
+            Pedido_Items.objects.create(pedido=pedido, item=item, cantidad=cantidad)
+
+            total_item = item.precio * cantidad
+            total_pedido += total_item
+
+            item.stock -= cantidad
+            item.save()
+            
+        except Item.DoesNotExist:
+            return Response({"error": f"El item con id {item_data['id']} no existe."}, status=status.HTTP_404_NOT_FOUND)
+
+    pedido.total = total_pedido
+    pedido.save()
+
+    return Response({"message": "Pedido creado con éxito", "pedido_id": pedido.id}, status=status.HTTP_201_CREATED)
+
 

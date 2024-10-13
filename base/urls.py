@@ -36,6 +36,7 @@ urlpatterns = [
     path('registerApp/', views.register_user),
     path('JSONpedidosPasados/',views.pedidosPasados),
     path('editarP/',views.EditarPerfil),
+    path('crearPedido/',views.crearPedido),
 
     # Autenticación
     path('api-token-auth/', tokens.CustomAuthToken.as_view()),
