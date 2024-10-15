@@ -10,6 +10,8 @@ urlpatterns = [
     path('pedidos/',views.pedidosView, name='pedidos'),
     path('productos/',views.productosView,name='productos'),
 
+    path('graficaDatosJSON/',views.datosGraficas),
+
     # Usuarios
     path('login/',views.loginView,name='login'),
     path('registroAd/',views.registroAdmin,name='registroAdmin'),
@@ -37,6 +39,7 @@ urlpatterns = [
     path('JSONpedidosPasados/',views.pedidosPasados),
     path('editarP/',views.EditarPerfil),
     path('crearPedido/',views.crearPedido),
+    path('crearDonacion/',views.crearDonacion),
 
     # Autenticación
     path('api-token-auth/', tokens.CustomAuthToken.as_view()),

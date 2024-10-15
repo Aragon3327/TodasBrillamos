@@ -93,9 +93,19 @@ class Pedido_Items(models.Model):
     def __str__(self):
         return f"Pedido {self.pedido.id}" if self.pedido else ""
 
+class Donacion(models.Model):
+    cliente = models.ForeignKey(Usuario,on_delete=models.SET_NULL, null=True)
+    curp = models.CharField(max_length=18,null=True,blank=True)
+    cantidad = models.FloatField(null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"Donación de {self.cliente.nombre} Aportación: {self.cantidad}"
+
+
 class PedidoItemsInline(admin.TabularInline):
     model = Pedido_Items
     extra = 1 
+
 
 @admin.register(Pedido)
 class PedidoAdmin(admin.ModelAdmin):

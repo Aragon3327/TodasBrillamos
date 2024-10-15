@@ -6,9 +6,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout,authenticate,login
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect,JsonResponse
+from django.http import HttpResponseRedirect,JsonResponse,HttpResponse
+from django.core import serializers
 from .forms import LoginForm, ItemForm, CategoriasForm,RegistroForm,EditarPerfilForm
-from .models import Item,Pedido,Categoria,Usuario,Pedido_Items
+from .models import Item,Pedido,Categoria,Usuario,Pedido_Items,Donacion
 from .decorators import admin_required
 
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -17,6 +18,10 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework import status
+
+from datetime import datetime
+from calendar import monthrange
+import json
 
 # VIEWS
 def loginView(request):
@@ -53,29 +58,47 @@ def logoutView(request):
 
 @login_required
 @admin_required
-def dashboard(request):
-    import datetime
-    actual = datetime.datetime.now()
+def datosGraficas(request):
+    actual = datetime.now()
 
-    pedidosTotales = Pedido.objects.filter(fecha__year=actual.year,fecha__month=actual.month)
+    pedidos_totales = Pedido.objects.filter(fecha__year=actual.year, fecha__month=actual.month)
 
-    pedidosTotalesConteo = []
-    pedidosPagados = 0
-    pedidosNoPagados = 0
-    for pedido in pedidosTotales:
+    dias_del_mes = actual.day
+    pedidos_fecha_pagados = [0] * dias_del_mes
+    pedidos_fecha_no_pagados = [0] * dias_del_mes
+    pedidosEnviados = 0
+    pedidoNoEnviados = 0
+
+    for pedido in pedidos_totales:
+        dia = pedido.fecha.day - 1
+
+        if pedido.enviado: pedidosEnviados+=1 
+        else: pedidoNoEnviados+=1
+
         if pedido.pagado:
-            pedidosPagados += 1
+            pedidos_fecha_pagados[dia] += 1
         else:
-            pedidosNoPagados += 1
-    
-    pedidosTotalesConteo.append(pedidosPagados)
-    pedidosTotalesConteo.append(pedidosNoPagados)
+            pedidos_fecha_no_pagados[dia] += 1
+
+    pedidos_pagados_no_pagados = [
+        sum(pedidos_fecha_pagados),
+        sum(pedidos_fecha_no_pagados),
+    ]
 
     context = {
-        'pedidosTotalesConteo' : pedidosTotalesConteo
+        "pedidosTotalesPagados": pedidos_fecha_pagados,
+        "pedidosTotalesNoPagados": pedidos_fecha_no_pagados,
+        "pedidosPagadosyNoPagados": pedidos_pagados_no_pagados,
+        "pedidosEnviadosyNoEnviados":[pedidosEnviados,pedidoNoEnviados]
     }
+    return JsonResponse(context)
 
-    return render(request,'index.html',context)
+
+@login_required
+@admin_required
+def dashboard(request):
+    return render(request, 'index.html')
+
 
 @login_required
 @admin_required
@@ -338,6 +361,21 @@ def register_user(request):
         if user:
             Token.objects.get_or_create(user=user)
         return Response({'message': 'User created successfully'}, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def crearDonacion(request):
+    datos = request.data
+    usuario = request.user
+    donacion = Donacion.objects.create(cliente = usuario,cantidad = datos['cantidad'],curp = datos['curp'])
+
+    if donacion:
+        donacion.save()
+        return JsonResponse({"message":"Donación Creada"},status.HTTP_201_CREATED)
+    else:
+        return JsonResponse({"error":"Error en datos"},status.HTTP_406_NOT_ACCEPTABLE)
+
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])

@@ -26,17 +26,8 @@
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </div>
 </div>
-
-<script>
-
-    function reloadElement() {
-        const element = document.getElementById('ventasTotales');
-        element.width = canvas.parentElement.clientWidth;
-        element.height = 100;
-    }
-
-    window.addEventListener('resize', reloadElement);
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript">
     let date = new Date;
     let mes = date.getMonth() + 1;
     let year = date.getFullYear();
@@ -50,84 +41,96 @@
     }
 
     const ctx = document.getElementById('ventasTotales');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: diasList,
-            datasets: [{
-                label: 'Ordenes pagadas',
-                data: [8, 12, 15, 10, 13, 19],
-                borderWidth: 1
-            },
-            {
-                label: 'Ordenes no pagadas',
-                data: [1, 10, 2, 4, 2, 9],
-                borderWidth: 1
-            }
-            ]
-        },
-        options: {
-            responsive: true,
-            interaction: {
-                mode: 'index',
-                intersect: false,
-            },
-            maintainAspectRatio: false,
-            stacked: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: `Ventas: ${mes}/${year}`
-                }
-            }
-        }
-    });
-
-    const dataOrdenes = {
-        labels: [
-            'No pagadas',
-            'Pagadas',
-        ],
-        datasets: [{
-            data: [100, 50],
-            backgroundColor: [
-                'rgb(255, 99, 132)',
-                'rgb(54, 162, 235)',
-            ],
-            hoverOffset: 1
-        }]
-    };
-
-    const dataEnvios = {
-        labels: [
-            'No enviadas',
-            'Enviadas',
-        ],
-        datasets: [{
-            data: [100, 150],
-            backgroundColor: [
-                'rgb(255, 99, 132)',
-                'rgb(54, 162, 235)',
-            ],
-            hoverOffset: 1
-        }]
-    };
-
-    const configOrdenes = {
-        type: 'doughnut',
-        data: dataOrdenes,
-    };
-
-    const configEnvios = {
-        type: 'doughnut',
-        data: dataEnvios,
-    };
 
     const ordenesEstado = document.getElementById('ordenesEstado');
     const ordenesTotales = document.getElementById('ordenesTotales');
 
-    new Chart(ordenesTotales, configOrdenes);
-    new Chart(ordenesEstado, configEnvios);
+    $.getJSON('graficaDatosJSON/', function (data, jqXHR) {
+
+        const dataOrdenes = {
+            labels: [
+                'Pagadas',
+                'No pagadas',
+            ],
+            datasets: [{
+                data: data.pedidosPagadosyNoPagados,
+                backgroundColor: [
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 99, 132)',
+                ],
+                hoverOffset: 1
+            }]
+        };
+
+        const dataEnvios = {
+            labels: [
+                'Enviadas',
+                'No enviadas',
+            ],
+            datasets: [{
+                data: data.pedidosEnviadosyNoEnviados,
+                backgroundColor: [
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 99, 132)',
+                ],
+                hoverOffset: 1
+            }]
+        };
+
+        const configOrdenes = {
+            type: 'doughnut',
+            data: dataOrdenes,
+        };
+
+        const configEnvios = {
+            type: 'doughnut',
+            data: dataEnvios,
+        };
+
+        new Chart(ordenesTotales, configOrdenes);
+        new Chart(ordenesEstado, configEnvios);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: diasList,
+                datasets: [{
+                    label: 'Ordenes pagadas',
+                    data: data.pedidosTotalesPagados,
+                    borderWidth: 1
+                },
+                {
+                    label: 'Ordenes no pagadas',
+                    data: data.pedidosTotalesNoPagados,
+                    borderWidth: 1
+                }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                maintainAspectRatio: false,
+                stacked: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: `Ventas: ${mes}/${year}`
+                    }
+                }
+            }
+        });
+    });
+
+    function reloadElement() {
+        const element = document.getElementById('ventasTotales');
+        element.width = canvas.parentElement.clientWidth;
+        element.height = 100;
+    }
+
+    window.addEventListener('resize', reloadElement);
 
 </script>
 
