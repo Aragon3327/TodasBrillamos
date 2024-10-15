@@ -36,9 +36,9 @@
                 <td class="text-danger">NO PAGADO</td>
                 {% endif %}
                 {% if pedido.enviado %}
-                <td class="text-success">ENTREGADO</td>
+                <td class="text-success">ENVIADO</td>
                 {% else %}
-                <td class="text-danger">NO ENTREGADO</td>
+                <td class="text-danger">NO ENVIADO</td>
                 {% endif %}
                 <td>
                     <a href="{% url 'pedidosExtend' pedido.id %}"

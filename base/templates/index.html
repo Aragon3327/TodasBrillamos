@@ -38,10 +38,10 @@
     window.addEventListener('resize', reloadElement);
 
     let date = new Date;
-    let mes = date.getMonth();
+    let mes = date.getMonth() + 1;
     let year = date.getFullYear();
 
-    let diasTotales = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    let diasTotales = new Date(date.getFullYear(), mes, 0).getDate();
 
     let diasList = [];
 

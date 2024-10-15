@@ -12,7 +12,7 @@
             style="display: inline;" class="btn btn-outline-success">PAGADO</a>
         {% else %}
         <a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedidoPago' pedido.id %}"
-            style="display: inline;" class="btn btn-outline-success">NO PAGADO</a>
+            style="display: inline;" class="btn btn-outline-danger">NO PAGADO</a>
         {% endif %}
         <strong>Estado envio: </strong>
         {% if pedido.enviado %}
@@ -20,13 +20,14 @@
             style="display: inline;" class="btn btn-outline-success">ENVIADO</a>
         {% else %}
         <a data-bs-toggle="tooltip" title="Cambiar Estado" href="{% url 'editarPedido' pedido.id %}"
-            style="display: inline;" class="btn btn-outline-success">NO ENVIADO</a>
+            style="display: inline;" class="btn btn-outline-danger">NO ENVIADO</a>
         {% endif %}
     </p>
     <table class="table table-hover table-striped">
         <thead>
             <tr>
                 <th>Producto</th>
+                <th>Precio</th>
                 <th>Cantidad</th>
             </tr>
         </thead>
@@ -34,6 +35,7 @@
             {% for item in items %}
             <tr>
                 <td>{{item.item.nombre}}</td>
+                <td>{{item.item.precio|floatformat:"2g"}}</td>
                 <td>{{item.cantidad}}</td>
             </tr>
             {% endfor %}

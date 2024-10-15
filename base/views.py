@@ -93,7 +93,7 @@ def productosView(request):
 @admin_required
 def pedidosView(request):
     context = {
-        'pedidos':Pedido.objects.all()
+        'pedidos':Pedido.objects.all().order_by('-fecha')
     }
     return render(request, 'pedidos.html', context)
 
