@@ -22,6 +22,7 @@ from rest_framework import status
 from datetime import datetime
 from calendar import monthrange
 import json
+import stripe
 
 # VIEWS
 def loginView(request):
@@ -431,8 +432,6 @@ def crearPedido(request):
 
     return Response({"message": "Pedido creado con éxito", "pedido_id": pedido.id}, status=status.HTTP_201_CREATED)
 
-import stripe
-
 stripe.api_key = 'sk_test_51QAhEw2K799XBlDvmeJDmugblwa16EaPE4SVLo6zWJGUNHNR0ekJ794wXHvhrEIjMgQtjZkHSA9TUPO7mxvb7Npy002OrMhkat'
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -440,13 +439,15 @@ stripe.api_key = 'sk_test_51QAhEw2K799XBlDvmeJDmugblwa16EaPE4SVLo6zWJGUNHNR0ekJ7
 # @permission_classes([IsAuthenticated])
 def paymentsheet(request):
 
+    print(request.body)
+
     customer = stripe.Customer.create()
     ephemeralKey = stripe.EphemeralKey.create(
     customer=customer['id'],
     stripe_version='2024-09-30.acacia',
     )
     paymentIntent = stripe.PaymentIntent.create(
-        amount=1099,
+        amount=request.body,
         currency='mxn',
         customer=customer['id'],
         # In the latest version of the API, specifying the `automatic_payment_methods` parameter
