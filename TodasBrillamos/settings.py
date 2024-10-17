@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-5b=ir)o@clm8m9gk62y@atr!ys09b05dwkn4$r!b@3+5s$f4w6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','10.48.73.189','192.168.23.174']
+ALLOWED_HOSTS = ['127.0.0.1','10.48.73.189','192.168.23.225']
 
 # Application definition
 
@@ -71,6 +71,18 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# Stripe
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51QAhEw2K799XBlDvFa90HJL1N9TF96Zc2Lxhap0t3xqORw2E4qwmADNVoIO9O9o4ED775BGs8DamhEnriVxpor5m00fd7MTDQk'
+STRIPE_SECRET_KEY = 'sk_test_51QAhEw2K799XBlDvmeJDmugblwa16EaPE4SVLo6zWJGUNHNR0ekJ794wXHvhrEIjMgQtjZkHSA9TUPO7mxvb7Npy002OrMhkat'
+
+SECURE_SSL_REDIRECT = False
+# SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'TodasBrillamos.urls'
 

@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container p-2 my-2">
-    <p class="display-5">Dashboard</p>
+    <div class="row" style="align-items: center;">
+        <p class="col display-5">Dashboard</p>
+        <div class="col" style="align-items: end; display: flex;flex-direction: column-reverse;">
+            <button class="btn btn-outline-dark" type="button" data-bs-toggle="modal"
+            data-bs-target="#tablaDonadores"id="buttonDonadores">Donadores</button>
+        </div>
+    </div>
     <div class="container-sm p-2">
         <h4>Ventas totales</h5>
             <div class="container">
@@ -26,6 +32,39 @@
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </div>
 </div>
+
+<div class="modal" id="tablaDonadores">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Donadores</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover table-striped">
+
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>CURP</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for donador in donadores %}
+                        <tr>
+                            <td>{{donador.cliente.nombre}}</td>
+                            <td>{{donador.curp}}</td>
+                            <td>${{donador.cantidad}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
     let date = new Date;

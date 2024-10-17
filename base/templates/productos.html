@@ -1,76 +1,141 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container p-2 my-2">
-  <div class="container d-flex justify-content-between">
-    <p class="display-6">Listado de productos</p>
-    <button style="height: 50px;" type="button" data-bs-toggle="modal" data-bs-target="#menuCategoria" id="button-addon2" class="btn btn-outline-dark">Ver categorias</button>
-  </div>
-  <table class="table table-hover table-striped ">
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Categoria</th>
-        <th>Descripción</th>
-        <th>Descuento</th>
-        <th>Precio</th>
-        <th>Stock</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in items %}
-      <tr>
-        <td>{{item.nombre}}</td>
-        <td>{{item.categoria}}</td>
-        <td>{{item.descripcion}}</td>
-        {% if item.descuento %}
-        
-        <td>{{item.descuento}}%</td>
-        {% else %}
-        <td>No existe descuento</td>
-        {% endif %}
-        <td>$ {{item.precio|floatformat:2}}</td>
-        <td>{{item.stock}} unidades</td>
-        <td>
-          <a href="{% url 'editarItem' item.id %}" class="btn btn-outline-dark">Editar Item</a>
-          <a href="{% url 'borrarItem' item.id %}" class="btn btn-outline-danger">Borrar Item</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <div class="row" style="align-items: center;">
+        <p class="col display-6">Listado de productos</p>
+        <div class="col input-group col" style="height: 30px;">
+            <input id="search" onkeyup="busqueda()" type="text" class="form-control" placeholder="Buscar por...">
+            <button id="usuariobtn" onclick="busquedaUsuario(0)" class="btn btn-primary" type="button"
+                value="2">Producto</button>
+            <button id="pedidobtn" onclick="busquedaId(1)" class="btn btn-outline-secondary" type="button">
+                Categoria</button>
+            <button style="height: 40px;" type="button" data-bs-toggle="modal" data-bs-target="#menuCategoria"
+                id="button-addon2" class="btn btn-outline-dark">Ver categorias</button>
+        </div>
+    </div>
+    <table class="table table-hover table-striped ">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Categoria</th>
+                <th>Descripción</th>
+                <th>Descuento</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaProducto">
+            {% for item in items %}
+            <tr>
+                <td>{{item.nombre}}</td>
+                <td>{{item.categoria}}</td>
+                <td>{{item.descripcion}}</td>
+                {% if item.descuento %}
+
+                <td>{{item.descuento}}%</td>
+                {% else %}
+                <td>No existe descuento</td>
+                {% endif %}
+                <td>$ {{item.precio|floatformat:2}}</td>
+                <td>{{item.stock}} unidades</td>
+                <td>
+                    <a href="{% url 'editarItem' item.id %}" class="btn btn-outline-dark">Editar Item</a>
+                    <a href="{% url 'borrarItem' item.id %}" class="btn btn-outline-danger">Borrar Item</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <div class="modal" id="menuCategoria">
-  <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h4 class="modal-title">Categorias</h4>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <table class="table table-hover table-striped">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Categorias</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover table-striped">
 
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for categoria in categorias %}
-                <tr>
-                  <td>{{categoria.nombre}}</td>
-                  <td>
-                    <a href="{% url 'borrarCategoria' categoria.id %}" style="display: inline;" class="btn btn-outline-danger">Borrar Categoria</a>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-      </div>
-  </div>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for categoria in categorias %}
+                        <tr>
+                            <td>{{categoria.nombre}}</td>
+                            <td>
+                                <a href="{% url 'borrarCategoria' categoria.id %}" style="display: inline;"
+                                    class="btn btn-outline-danger">Borrar Categoria</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
 
+    let valor = 0
+    const btnUsuario = document.getElementById("usuariobtn");
+    const btnPedido = document.getElementById("pedidobtn");
+
+    function busquedaUsuario(value) {
+        if (value != valor) {
+            btnUsuario.classList.remove("btn-outline-secondary");
+            btnUsuario.classList.add("btn-primary");
+
+            btnPedido.classList.remove("btn-primary");
+            btnPedido.classList.add("btn-outline-secondary");
+            valor = value
+        } else {
+            btnUsuario.classList.remove("btn-primary");
+            btnUsuario.classList.add("btn-outline-secondary");
+            busquedaId(1)
+        }
+    }
+
+    function busquedaId(value) {
+        if (value != valor) {
+            btnPedido.classList.remove("btn-outline-secondary");
+            btnPedido.classList.add("btn-primary");
+
+            btnUsuario.classList.remove("btn-primary");
+            btnUsuario.classList.add("btn-outline-secondary");
+            valor = value
+        } else {
+            btnPedido.classList.remove("btn-primary");
+            btnPedido.classList.add("btn-outline-secondary");
+            busquedaUsuario(0)
+        }
+    }
+
+    function busqueda() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("search");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("tablaProducto");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[valor];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+</script>
 {% endblock %}

@@ -97,7 +97,14 @@ def datosGraficas(request):
 @login_required
 @admin_required
 def dashboard(request):
-    return render(request, 'index.html')
+
+    donadores = Donacion.objects.all()
+
+    context = {
+        'donadores':donadores
+    }
+
+    return render(request, 'index.html',context)
 
 
 @login_required
@@ -254,7 +261,7 @@ def EditarPerfil(request):
 @permission_classes([IsAuthenticated])
 def ListadoItems(request):
 
-    items = Item.objects.all()
+    items = Item.objects.filter(stock__gt=0)
 
     data = []
 
@@ -307,6 +314,22 @@ def InfoUser(request):
     }
 
     return JsonResponse(json, safe=False)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def categoriasJSON(request):
+    categorias = Categoria.objects.all()
+
+    lista = []
+
+    for categoria in categorias:
+        json = {
+            'nombre':categoria.nombre
+        }
+        lista.append(json)
+
+    return JsonResponse(lista,safe=False)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -408,4 +431,33 @@ def crearPedido(request):
 
     return Response({"message": "Pedido creado con éxito", "pedido_id": pedido.id}, status=status.HTTP_201_CREATED)
 
+import stripe
 
+stripe.api_key = 'sk_test_51QAhEw2K799XBlDvmeJDmugblwa16EaPE4SVLo6zWJGUNHNR0ekJ794wXHvhrEIjMgQtjZkHSA9TUPO7mxvb7Npy002OrMhkat'
+@api_view(['POST'])
+@permission_classes([AllowAny])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+def paymentsheet(request):
+
+    customer = stripe.Customer.create()
+    ephemeralKey = stripe.EphemeralKey.create(
+    customer=customer['id'],
+    stripe_version='2024-09-30.acacia',
+    )
+    paymentIntent = stripe.PaymentIntent.create(
+        amount=1099,
+        currency='mxn',
+        customer=customer['id'],
+        # In the latest version of the API, specifying the `automatic_payment_methods` parameter
+        # is optional because Stripe enables its functionality by default.
+        automatic_payment_methods={
+          'enabled': True,
+        },
+    )
+    return JsonResponse({
+        'paymentIntent':paymentIntent.client_secret,
+        'ephemeralKey':ephemeralKey.secret,
+        'customer':customer.id,
+        'publishableKey':'pk_test_51QAhEw2K799XBlDvFa90HJL1N9TF96Zc2Lxhap0t3xqORw2E4qwmADNVoIO9O9o4ED775BGs8DamhEnriVxpor5m00fd7MTDQk'
+    })

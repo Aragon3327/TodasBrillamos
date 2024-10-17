@@ -40,6 +40,9 @@ urlpatterns = [
     path('editarP/',views.EditarPerfil),
     path('crearPedido/',views.crearPedido),
     path('crearDonacion/',views.crearDonacion),
+    path('JSONCategoria/',views.categoriasJSON),
+
+    path('STRIPEpago/',views.paymentsheet),
 
     # Autenticación
     path('api-token-auth/', tokens.CustomAuthToken.as_view()),
