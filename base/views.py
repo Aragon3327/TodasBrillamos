@@ -46,6 +46,7 @@ def registroAdmin(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.es_admin = True
+            user.super_user = True
             user.save()
             return redirect('/')
     else:
@@ -434,12 +435,9 @@ def crearPedido(request):
 
 stripe.api_key = 'sk_test_51QAhEw2K799XBlDvmeJDmugblwa16EaPE4SVLo6zWJGUNHNR0ekJ794wXHvhrEIjMgQtjZkHSA9TUPO7mxvb7Npy002OrMhkat'
 @api_view(['POST'])
-@permission_classes([AllowAny])
-# @authentication_classes([TokenAuthentication])
-# @permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def paymentsheet(request):
-
-    print(request.body)
 
     customer = stripe.Customer.create()
     ephemeralKey = stripe.EphemeralKey.create(
@@ -450,8 +448,6 @@ def paymentsheet(request):
         amount=request.body,
         currency='mxn',
         customer=customer['id'],
-        # In the latest version of the API, specifying the `automatic_payment_methods` parameter
-        # is optional because Stripe enables its functionality by default.
         automatic_payment_methods={
           'enabled': True,
         },
